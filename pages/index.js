@@ -1,14 +1,6 @@
 import { useState } from 'react';
 import altogic from '../libs/altogic';
 
-async function fetchUsers() {
-	const { data, errors } = await altogic.db.model('users').get();
-	return {
-		data,
-		errors
-	};
-}
-
 export default function Home({ data }) {
 	const [users, setUsers] = useState(data);
 	async function onChangeHandler(e) {
@@ -25,22 +17,28 @@ export default function Home({ data }) {
 	};
 
 	return (
-		<div style={{ padding: '10px' }}>
+		<div>
 			<pre>{JSON.stringify(users, null, 2)}</pre>
 			<div>
 				<input onChange={onChangeHandler} type="file" />
 			</div>
 			<br />
 			<div>
-				<button onClick={clickHandler}>Fetch</button>
+				<button onClick={clickHandler}>refresh users data</button>
 			</div>
 		</div>
 	);
 }
+async function fetchUsers() {
+	const { data, errors } = await altogic.db.model('users').get();
+	return {
+		data,
+		errors
+	};
+}
 
 export async function getServerSideProps() {
 	const { data, errors } = await fetchUsers();
-
 	if (!data || errors) {
 		return {
 			notFound: true
